@@ -25,9 +25,9 @@ text_str = File.read('./asd.txt')
 text_split = text_str.split
 applicants = Applicant.first(10).to_a
 
-(1..1000).each do |x|
+(1..100).each do |x|
   app_list = []
-  (1..100).each do |_y|
+  (1..1000).each do |_y|
     app = applicants[rand(10)]
     sp = app[:text]
     val = {}

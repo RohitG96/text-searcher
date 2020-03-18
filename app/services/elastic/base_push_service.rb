@@ -7,42 +7,78 @@ module Elastic
       @opts = opts || {}
     end
 
-    def fetch; end
+    attr_reader :query, :opts
+
+    def es_primary_key
+      :id
+    end
+
+    def push
+      out = source_query.where(query).limit(limit)
+      raw_sql = out.select(select_columns).to_sql.squish
+      conn = source_model.connection_pool.checkout
+      db_conn = conn.raw_connection
+      db_conn.send_query(raw_sql)
+      db_conn.set_single_row_mode
+      queue = []
+      db_conn.get_result.stream_each do |row|
+        queue << row
+        next unless queue.size >= batch_size
+
+        sync_batch(queue.pop(queue.size), {})
+      end
+      sync_batch(queue.pop(queue.size), {})
+      source_model.connection_pool.checkin(conn)
+    rescue StandardError => e
+      ::Rollbar.error(e) if ::Rails.env.production?
+      raise(e) if ::Rails.env.development?
+
+      errors.add(:base, "Failed due to ERR:#{e.message}")
+      false
+    ensure
+      source_model.connection_pool.checkin(source_model.connection)
+    end
+
+    def task_id
+      @task_id ||= opts[:task_id] || SecureRandom.uuid
+    end
+
+    def sync_batch(batch, meta={})
+      return true if batch.empty?
+      ::ElasticPushJob.perform_now(task_id, index_name, docs_for(batch, meta))
+      true
+    end
+
 
     def batch_size
       opts[:batch_size] || 1000
     end
 
     def limit
-      opts[:limit]
+      opts[:limit] || 10
     end
 
     def index_name
       index_suffix.to_s
-      end
+    end
 
     def index_suffix
-      raise "#{__method__} Not implemented"
+      "applicant"
     end
 
     def source_model
-      raise "#{__method__} Not implemented"
+      # raise "#{__method__} Not implemented"
+      Applicant
     end
 
     def source_query
-        source_model
+      source_model
     end
 
-    def associations
-        []
-    end
-    
     def docs_for(batch, meta)
-        association_jsons = associations.map {|resource| [resource, resource_for(resource, resource_ids_for(resource, batch))] }.to_h
-        batch.map {|row|
-            associations_data = associations.map {|resource| [resource, association_jsons[resource][row["#{resource}_id"]] || {}] }.to_h
-            es_json_for(row, meta.merge(associations_data)).as_json
-        }
+      batch.map do |row|
+        es_json_for(row, meta).as_json
+      end
     end
 
     def pluck_columns
@@ -65,16 +101,16 @@ module Elastic
       columns.zip(columns).to_h.merge('extract(epoch from updated_at) AS t' => 't').with_indifferent_access
     end
 
-    def es_json_for(row, meta={})
-        pk = es_primary_key.to_sym
-        out = row.merge(meta).symbolize_keys
-  
-        {
-          index: {
-            _id:  out[pk],
-            data: out.reject {|_, v| v.nil? || v.is_a?(String) && v.blank? || v == "{}" }
-          }
+    def es_json_for(row, meta = {})
+      pk = es_primary_key.to_sym
+      out = row.merge(meta).symbolize_keys
+
+      {
+        index: {
+          _id: out[pk],
+          data: out.reject { |_, v| v.nil? || v.is_a?(String) && v.blank? || v == '{}' }
         }
+      }
     end
   end
 end

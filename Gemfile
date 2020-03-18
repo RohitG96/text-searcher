@@ -32,6 +32,7 @@ gem 'rubocop', '~> 0.76.0'
 gem 'settingslogic'
 gem 'sidekiq', '~> 5.2.7'
 gem 'sidekiq-scheduler', '~> 3.0.0'
+gem 'searchkick'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use Active Model has_secure_password
