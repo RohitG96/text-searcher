@@ -10,7 +10,7 @@ module Elastic
           text: { type: 'text' },
           created_at: { type: 'text' },
           updated_at: { type: 'text' },
-          t: {type: "long"}
+          t: { type: 'long' }
         }
       }
     end

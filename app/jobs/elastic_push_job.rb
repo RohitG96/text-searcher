@@ -11,8 +11,6 @@ class ElasticPushJob < ApplicationJob
       val['index']['error'].blank?
     end
     puts("ELASTIC_SUCCESS #{task_id} #{index} #{success}")
-    if errors.present?
-      puts("ELASTIC_ERROR #{task_id} #{index} #{errors}")
-    end
+    puts("ELASTIC_ERROR #{task_id} #{index} #{errors}") if errors.present?
   end
 end

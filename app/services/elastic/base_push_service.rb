@@ -43,12 +43,12 @@ module Elastic
       @task_id ||= opts[:task_id] || SecureRandom.uuid
     end
 
-    def sync_batch(batch, meta={})
+    def sync_batch(batch, meta = {})
       return true if batch.empty?
+
       ::ElasticPushJob.perform_now(task_id, index_name, docs_for(batch, meta))
       true
     end
-
 
     def batch_size
       opts[:batch_size] || 1000
@@ -63,7 +63,7 @@ module Elastic
     end
 
     def index_suffix
-      "applicant"
+      'applicant'
     end
 
     def source_model

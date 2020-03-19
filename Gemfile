@@ -29,10 +29,10 @@ gem 'patron', '~> 0.13.3'
 gem 'propono', '~> 2.2.0'
 gem 'redis-rails', '~> 5.0.2'
 gem 'rubocop', '~> 0.76.0'
+gem 'searchkick'
 gem 'settingslogic'
 gem 'sidekiq', '~> 5.2.7'
 gem 'sidekiq-scheduler', '~> 3.0.0'
-gem 'searchkick'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use Active Model has_secure_password
@@ -51,6 +51,7 @@ end
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
+  gem 'awesome_print'
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'web-console', '>= 3.3.0'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
