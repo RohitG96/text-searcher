@@ -1,6 +1,6 @@
 # README
 This is a ruby 2.6.5 based project. For installation of ruby and ruby env managers follow https://gorails.com/setup
-install posgresql
+ and install posgresql
 
 ## Intsall depndencies
 ```
