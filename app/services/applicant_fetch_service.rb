@@ -23,7 +23,6 @@ class ApplicantFetchService
             true
         rescue StandardError => e
             @error = e.full_message
-            byebug
             false    
         end
     end

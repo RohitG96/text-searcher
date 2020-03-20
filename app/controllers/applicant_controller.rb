@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class TncsController < ApplicationController
+class ApplicantController < ApplicationController
 
     def fetch
-        serv = ApplicantFetchService(params)
+        serv = ::ApplicantFetchService.new(params)
         if serv.fetch
             render json: serv.result, status: :ok
         else
