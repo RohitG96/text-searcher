@@ -1,24 +1,35 @@
 # README
+This is a ruby 2.6.5 based project. For installation of ruby and ruby env managers follow https://gorails.com/setup
+install posgresql
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Intsall depndencies
+```
+gem install bundler -v 2.1.4
+bundle
+```
 
-Things you may want to cover:
+## Database Setup
+```
+rake db:create db:migrate
+```
 
-* Ruby version
+## Populate Data
+```
+rake db:seed
+```
+Note: This will create a table of applicants with 10000 records for a bigger search tree
 
-* System dependencies
+## Drop Database
+```
+rake db:drop
+```
 
-* Configuration
+## Run server
+```
+rails s
+```
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+## To fetch applicant with matching substrings in text field
+```
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" http://127.0.0.1:3000/search_text?limit=10&query=java
+```
