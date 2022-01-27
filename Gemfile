@@ -31,7 +31,7 @@ gem 'redis-rails', '~> 5.0.2'
 gem 'rubocop', '~> 0.76.0'
 gem 'searchkick'
 gem 'settingslogic'
-gem 'sidekiq', '~> 5.2.7'
+gem 'sidekiq', '~> 6.4.0'
 gem 'sidekiq-scheduler', '~> 3.0.0'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
